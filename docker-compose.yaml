@@ -1,0 +1,66 @@
+services:
+  postgres:
+    container_name: postgres_container
+    image: postgres
+    environment:
+      POSTGRES_USER: gen_user
+      POSTGRES_PASSWORD: LNSF4g(Ik4-m_^
+      POSTGRES_DB: main_db
+      PGDATA: /data/postgres
+    volumes:
+      - postgresql_data:/data/postgres
+    ports:
+      - "5432:5432"
+    networks:
+      - postgres_dev
+    restart: unless-stopped
+
+  migration:
+    build: .
+    command: python manage.py migrate
+    depends_on:
+      postgres:
+        condition: service_started
+    restart: on-failure
+    networks:
+      - postgres_dev
+
+  web_gunicorn:
+    container_name: web_gunicorn
+    build: .
+    command: [ "gunicorn", "benchmark.wsgi:application", "--bind", "0.0.0.0:8020", "--workers", "5", "--threads", "2" ]
+    environment:
+      - DJANGO_SUPERUSER_USERNAME=admin
+      - DJANGO_SUPERUSER_EMAIL=admin@admin.ru
+      - DJANGO_SUPERUSER_PASSWORD=hipz867a#pn
+    ports:
+      - 8020:8020
+    networks:
+      - postgres_dev
+    depends_on:
+      migration:
+        condition: service_completed_successfully
+    restart: always
+
+  web_unicorn:
+    container_name: web_gunicorn
+    build: .
+    command: [ "gunicorn ", "benchmark.asgi:application", "--bind", "0.0.0.0:8030", "-w", "5", "-k", "uvicorn_worker.UvicornWorker"]
+    environment:
+      - DJANGO_SUPERUSER_USERNAME=admin
+      - DJANGO_SUPERUSER_EMAIL=admin@admin.ru
+      - DJANGO_SUPERUSER_PASSWORD=hipz867a#pn
+    ports:
+      - 8030:8030
+    networks:
+      - postgres_dev
+    depends_on:
+      migration:
+        condition: service_completed_successfully
+    restart: always
+
+volumes:
+  postgresql_data:
+
+networks:
+  postgres_dev:
