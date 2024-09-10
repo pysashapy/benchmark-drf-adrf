@@ -44,7 +44,12 @@ INSTALLED_APPS = [
 
     "basedata.apps.BasedataConfig",
     "asgiapi.apps.AsgiapiConfig",
-    "wsgiapi.apps.WsgiapiConfig"
+    "wsgiapi.apps.WsgiapiConfig",
+
+    "rest_framework",
+    "adrf",
+
+    "drf_spectacular",
 ]
 
 MIDDLEWARE = [
@@ -86,7 +91,7 @@ if not env.str("DATABASE", None):
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
-            "NAME": BASE_DIR / "db" / "db.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
         },
     }
 else:
