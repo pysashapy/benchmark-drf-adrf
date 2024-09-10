@@ -28,7 +28,7 @@ services:
   web_gunicorn:
     container_name: web_gunicorn
     build: .
-    command: [ "gunicorn", "benchmark.wsgi:application", "--bind", "0.0.0.0:8020", "--workers", "5", "--threads", "2" ]
+    command: [ "python", "-m", "gunicorn", "benchmark.wsgi:application", "--bind", "0.0.0.0:8020", "--workers", "10", "--threads", "2" ]
     environment:
       - DJANGO_SUPERUSER_USERNAME=admin
       - DJANGO_SUPERUSER_EMAIL=admin@admin.ru
@@ -45,7 +45,7 @@ services:
   web_unicorn:
     container_name: web_unicorn
     build: .
-    command: [ "python", "-m", "gunicorn", "benchmark.asgi:application", "--bind", "0.0.0.0:8030", "-w", "5", "-k", "uvicorn_worker.UvicornWorker"]
+    command: [ "python", "-m", "gunicorn", "benchmark.asgi:application", "--bind", "0.0.0.0:8030", "-w", "10", "-k", "uvicorn_worker.UvicornWorker"]
     environment:
       - DJANGO_SUPERUSER_USERNAME=admin
       - DJANGO_SUPERUSER_EMAIL=admin@admin.ru
